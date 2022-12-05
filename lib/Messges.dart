@@ -3,6 +3,7 @@
 import 'package:chatbot/messageModel.dart';
 import 'package:dialog_flowtter/dialog_flowtter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:hexcolor/hexcolor.dart';
 
 List<MessageModel> messagebutton = [];
@@ -257,39 +258,23 @@ class _MessageScreenState extends State<MessageScreen>
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 5, horizontal: 5),
-                                    child: InkWell(
-                                      onTapDown: _tapDown,
-                                      onTapUp: _tapUp,
-                                      borderRadius: BorderRadius.circular(30),
+                                    child: Bounceable(
+                                      scaleFactor: 0.6,
                                       onTap: () {
                                         sendMessage(startMessage[index]);
                                       },
-                                      child: Listener(
-                                        onPointerDown:
-                                            (PointerDownEvent event) {
-                                          tap = index;
-                                          _buttoncontroller.forward();
-                                        },
-                                        onPointerUp: (PointerUpEvent event) {
-                                          _buttoncontroller.reverse();
-                                        },
-                                        child: Transform.scale(
-                                          scale: index == tap ? _scale : 1,
-                                          child: Container(
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 11),
-                                            decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Colors.grey,
-                                                    width: 0.5),
-                                                borderRadius:
-                                                    BorderRadius.circular(30)),
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 8.0, right: 8),
-                                              child: Text(startMessage[index]),
-                                            ),
-                                          ),
+                                      child: Container(
+                                        padding:
+                                            EdgeInsets.symmetric(vertical: 11),
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: Colors.grey, width: 0.5),
+                                            borderRadius:
+                                                BorderRadius.circular(30)),
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 8.0, right: 8),
+                                          child: Text(startMessage[index]),
                                         ),
                                       ),
                                     ),
@@ -410,11 +395,7 @@ class _MessageScreenState extends State<MessageScreen>
                                   child: messages[index]['isUserMessage']
                                       ? _listMessage[index]
                                       : botMessage(
-                                          messagebutton[index].message
-                                          /*  messages[index]['message']
-                                                      .text
-                                                      .text[0] */
-                                          ,
+                                          messagebutton[index].message,
                                           messagebutton[index].buttons,
                                           messagebutton[index].check,
                                           index,
@@ -591,14 +572,12 @@ class _MessageScreenState extends State<MessageScreen>
 
   Widget botMessage(String mainText, List<String> buttons, bool check,
       int index, AnimationController? animate) {
-    print('index');
-    print(index);
-    return SizeTransition(
-      sizeFactor: new CurvedAnimation(
+    return ScaleTransition(
+      alignment: Alignment.bottomLeft,
+      scale: new CurvedAnimation(
           reverseCurve: Curves.easeOutSine,
           parent: animate as AnimationController,
           curve: Curves.easeOutSine),
-      axisAlignment: 0.0,
       child: Container(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -647,45 +626,27 @@ class _MessageScreenState extends State<MessageScreen>
                                 for (int i = 0; i < buttons.length; i++)
                                   Padding(
                                     padding: const EdgeInsets.only(bottom: 8),
-                                    child: InkWell(
+                                    child: Bounceable(
+                                      duration: Duration(
+                                        milliseconds: 1,
+                                      ),
+                                      scaleFactor: 0.5,
                                       onTap: () {
                                         sendMessage(buttons[i]);
-                                        print('object');
-                                        print(index);
-                                        print(messagebutton.length);
                                       },
-                                      child: Listener(
-                                        onPointerDown:
-                                            (PointerDownEvent event) {
-                                          tap = i;
-                                          if (index == 0)
-                                            _buttoncontroller.forward();
-                                        },
-                                        onPointerUp: (PointerUpEvent event) {
-                                          if (index == 0)
-                                            _buttoncontroller.reverse();
-                                        },
-                                        child: Transform.scale(
-                                          scale: i == tap &&
-                                                  index ==
-                                                      messagebutton.length - 1
-                                              ? _scale
-                                              : 1,
-                                          child: Container(
-                                            width: 250,
-                                            height: 50,
-                                            alignment: Alignment.center,
-                                            decoration: BoxDecoration(
-                                                color: Colors.black54,
-                                                borderRadius:
-                                                    BorderRadius.circular(17)),
-                                            child: Text(
-                                              buttons[i],
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 15),
-                                            ),
-                                          ),
+                                      child: Container(
+                                        width: 250,
+                                        height: 50,
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                            color: Colors.black54,
+                                            borderRadius:
+                                                BorderRadius.circular(17)),
+                                        child: Text(
+                                          buttons[i],
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 15),
                                         ),
                                       ),
                                     ),
@@ -714,10 +675,10 @@ class ChatMessage extends StatelessWidget {
   final AnimationController animationController;
   @override
   Widget build(BuildContext context) {
-    return new SizeTransition(
-      sizeFactor: new CurvedAnimation(
+    return new ScaleTransition(
+      scale: new CurvedAnimation(
           parent: animationController, curve: Curves.easeOut),
-      axisAlignment: 0.0,
+      alignment: Alignment.bottomRight,
       child: Container(
           child: new Row(
         mainAxisAlignment: MainAxisAlignment.end,
