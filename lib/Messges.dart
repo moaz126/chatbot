@@ -42,7 +42,7 @@ class _MessageScreenState extends State<MessageScreen>
   late double _scale;
   late AnimationController _buttoncontroller;
   late AnimationController _messagecontroller;
-
+  late AnimationController firstMssageAnimation;
   int tap = -1;
   void _tapDown(TapDownDetails details) {
     _buttoncontroller.forward();
@@ -67,6 +67,10 @@ class _MessageScreenState extends State<MessageScreen>
       });
     _messagecontroller = new AnimationController(
       duration: new Duration(milliseconds: 1000),
+      vsync: this,
+    );
+    firstMssageAnimation = AnimationController(
+      duration: new Duration(milliseconds: 900),
       vsync: this,
     );
     super.initState();
@@ -400,6 +404,11 @@ class _MessageScreenState extends State<MessageScreen>
                                           messagebutton[index].check,
                                           index,
                                           messagebutton[index].controller)),
+                              messages.length == 1
+                                  ? SizedBox(
+                                      height: 170,
+                                    )
+                                  : SizedBox()
                             ],
                           );
                         },
@@ -545,7 +554,9 @@ class _MessageScreenState extends State<MessageScreen>
     ChatMessage message = new ChatMessage(
       message: text,
       animationController: new AnimationController(
-        duration: new Duration(milliseconds: 500),
+        duration: _listMessage.isEmpty
+            ? new Duration(milliseconds: 700)
+            : new Duration(milliseconds: 700),
         vsync: this,
       ),
       key: null,
@@ -678,7 +689,8 @@ class ChatMessage extends StatelessWidget {
     return new ScaleTransition(
       scale: new CurvedAnimation(
           parent: animationController, curve: Curves.easeOut),
-      alignment: Alignment.bottomRight,
+      alignment:
+          messages.length == 1 ? Alignment.bottomCenter : Alignment.bottomRight,
       child: Container(
           child: new Row(
         mainAxisAlignment: MainAxisAlignment.end,
